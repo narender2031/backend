@@ -1,0 +1,69 @@
+<div class="x_panel">
+    <div class="x_title" id="panel10">
+        <h4>Invites</h4>
+        <hr width="20px" />
+    </div>
+    <div class="x_content">
+        <% if @all_invites.blank? %>
+          <p class="empty-list">No Invites yet!</p>
+        <% else %>
+          <div class="table-responsive">
+              <table class= "table table-striped">
+                  <thead>
+                      <tr class="heading">
+                          <th class="column-title"> Name</th>
+                          <th class="column-title"> Phone Number</th>
+                          <th class="column-title"> User</th>
+                          <th class="column-title"> Invite Create Time</th>
+                          <th class="column-title"></th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <% @all_invites.each do |a| %>
+                        <tr class="even pointer" ASC>
+                            <td class=" "><%= a.name  %></td>
+                            <td class=" "><%= a.phone %></td>
+                            <td class=" "><%= a.user.first_name + " " + a.user.last_name %></td>
+                            <td class=" "><%= a.created_at.to_date %> </td>
+                            <td></td>
+                        </tr>
+                      <% end %>
+                  </tbody>
+              </table>
+          </div>
+        <% end %>
+    </div>
+</div>
+<div class="x_panel" id="panel9">
+  <div class="x_title">
+    <h4>Recent Reviews</h4>
+    <hr width="30px" />
+  </div>
+  <div class="x_content">
+    <% if @all_reviews.blank? %>
+      <p class="empty-list">No Reviews yet!</p>
+   <% else %>
+    <% @all_reviews.each do |a| %>
+        <article class="media event">
+            <a class="pull-left">
+            <% if a.src == "yelp" %>
+                <p class="fa-fa-icon"><%= image_tag "yelp.png" %></p>
+            <% else %>
+                <p class="fa-fa-icon"><img src="<%= a.src %>"></p>
+            <% end %>
+            </a>
+            <a class="pull-right">
+            <% if a.review_time != nil %>
+                <p><%= a.review_time.to_date%><p>
+            <% end %>
+            </a>
+            <div class= "media-body">
+                <a class= "title"><%= a.name %>
+                </a>
+                <p><%= a.comment %></p>
+            </div>
+        </article>
+        <% end %>
+    <% end %>
+    </div>
+</div>

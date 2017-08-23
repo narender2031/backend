@@ -1,0 +1,195 @@
+<body class="dash-body nav-md">
+    <div class="container body">
+        <div class="main_container">
+          <%= render partial: "layouts/left_col", :locals => { active: "Locations" } %>
+          <%= render partial: "layouts/nav_bar",  :locals => {active: "Locations"}%>
+
+            <div class="right_col">
+             <div class="container">
+                    <div class="row">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h4>Locations</h4>
+                                <hr width="20px"/>
+                            </div>
+                            <div class="x_content">
+                             <% if @location.empty? %>
+                                        <p class="empty-list">No Location yet!</p>
+                            <%else%>
+                                <div class="table table-responsive">
+                                    <table class= "table table-striped jambo_table bulk_action">
+                                        <thead>
+                                            <tr class="heading">
+                                                <th class="column-title">Location_id</th>
+                                                <th class="column-title"> Name</th>
+                                                <th class="column-title"> Phone Number</th>
+                                                <th class="column-title"> Address</th>
+                                                <th class="column-title"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% @location.each do |a| %>
+                                            <tr class="even pointer">
+                                                <td class=" " id="location_id"><%= a.id %></td>
+                                                <td class=" " id="name"><%= a.name %></td>
+                                                <td class=" "><%= a.phone %></td>
+                                                <td class=" "><%= a.address %></td>
+                                                <td class=" ">
+                                                    <div class="social-auth-container">
+
+                                                        <% if a.fb_page_id %>
+                                                        <div class="btn btn-default">
+                                                            <i class="fa fa-facebook social-links"></i>
+                                                            <%= a.fb_page_name %>
+                                                        </div>
+                                                        <% else %>
+                                                            <div>
+                                                            <button i class="btn btn-large btn-primary set-fb">Set up Facebook</button>
+                                                        </div>
+                                                        <% end %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <% end %>
+                                        </tbody>
+                                    </table>
+                                    <div class="modal fade bs-example-modal-sm" id="fb-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+                                        <div class="modal-dialog modal-sm" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4>Choose facebook page...</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul id="fb-pages">
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <div>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  <script>
+    $(".set-fb").click(function(){
+        var $row = $(this).closest("tr");    // Find the row
+        var $text = $row.find("#location_id").text(); // Find the text
+        var location_id = $text
+        //console.log(location_id);
+
+            event.preventDefault();
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    var accessToken = response.authResponse.accessToken;
+                    //console.log(accessToken);
+                    FB.api('/me/accounts', function(response) {
+                        //console.log(response);
+                        $(document).ready(function(){
+                          jQuery.noConflict();
+                        $('#fb-modal').modal('show');
+                      })
+                        response.data.forEach(function(page){
+                            $('#fb-pages').append('<li class="fb-page" data-id="' + page.id + '" data-access-token="' + page.access_token +'">' + page.name + '</li>');
+                            //console.log("page_id: " + page.id)
+                            //console.log("page_access_token: "+page.access_token)
+                            //console.log(location_id)
+                        });
+                        $("#fb-pages li").click(function(){
+                            var page_id = $(this).data("id");
+                            var page_access_token = $(this).data("access-token");
+                            var page_name = $(this).text();
+                            //console.log(page_id + ", " + page_access_token + ", " + page_name);
+
+                            //console.log(location_id)
+                            var settings = {
+                                async: true,
+                                crossDomain: true,
+                                "url": "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB9ti0A6n6dzMteVS_Td4n_SxdloP8IT_A",
+                                "method": "POST",
+                                "headers": {
+                                    "content-type": "application/json",
+                                },
+                                    "processData": false,
+                                    "data": '{"longUrl": "https://www.facebook.com/' + page_id + '"}'
+
+                            }
+
+                            $.ajax(settings).done(function (response) {
+                              //console.log("hello")
+                              //console.log(response)
+                             facebook_page = response['id'];
+                            //console.log(facebook_page);
+                            myfunction();
+                          });
+                          function myfunction(){
+                            setInterval(function(){
+                              $.ajax({
+                                  url: "opi/facebook_location",
+                                  type: 'post',
+                                  headers: {
+                                      "Authorization": 'Token token="<%= current_user.token %>"'
+                                  },
+                                  dataType: 'json',
+                                  data: {
+                                      location_id: location_id,
+                                      fb_page_name: page_name,
+                                      fb_page_id: page_id,
+                                      link_to_map_url: facebook_page,
+                                      fb_page_access_token: page_access_token
+
+                                  },
+
+                                  success: function(data) {
+                                      if(data.msg == "Success"){
+                                          FB.api(page_id + '/ratings?access_token=' + page_access_token, function(response){
+                                            console.log("fp.api response")
+                                      console.log(response);
+
+                                      location.reload();
+
+                                  });
+
+
+                                      }
+                                  }
+                              });
+                            },1000)
+                          }
+
+
+                        });
+
+
+                    });
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope: 'email, manage_pages, pages_show_list'});
+
+          });
+        window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '228343344341844',
+              xfbml      : true,
+              version    : 'v2.10'
+            });
+            FB.AppEvents.logPageView();
+        };
+
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "//connect.facebook.net/en_US/sdk.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+
+
+
+
+    </script>

@@ -1,0 +1,103 @@
+<%= form_for @team do |f| %>
+  <div class="form-group">
+      <%= f.label :name, class: "control-label" %>
+      <%= f.text_field :name, class: "form-control" %>
+  </div>
+  <div class="container">
+    <label class="control-label label-margin">Locations:</label>
+    <div class="row">
+     <% @location.each do |l| %>
+        <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
+            <div class="well profile_view">
+              <div class="col-sm-12">
+                <h2><%= l.name %></h2>
+                <div class="left col-xs-5 text-center">
+                  <%  if l.photo == ""%>
+                    <%= image_tag "company_profile.png", class: "img-circle img-responsive" %>
+                  <% else %>
+                    <img src ="<%= l.photo %>" class="img-circle img-responsive">
+                  <% end %>
+                </div>
+                <div class="right col-xs-7">
+                  <ul class="list-unstyled">
+                    <li><i class="fa fa-building red"></i>&nbsp<%= l.address %></li>
+                    <li><i class="fa fa-phone green"></i>&nbsp<%= l.phone %></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-xs-12 bottom text-center">
+                <div class="col-xs-12 col-sm-6 emphasis">
+                  <p class="ratings">
+                    <%= l.ratings %>
+                    <% if l.ratings.to_f <= 1 %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span>
+                    <% elsif l.ratings.to_f <=2 %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span
+                    <% elsif l.ratings.to_f <=3 %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span>
+                      <span class="fa fa-star-o"></span
+                    <% elsif l.ratings.to_f <=3.5 %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-half-o"></span>
+                      <span class="fa fa-star-o"></span
+                    <% elsif l.ratings.to_f <= 4%>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-o"></span
+                    <% elsif l.ratings.to_f <=4.5 %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star-half-o"></span>
+
+                    <% else %>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span>
+                      <span class="fa fa-star"></span
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+     <% end %>
+     </div>
+  </div>
+  <div>
+     <%= link_to_add_fields "Add  Location", f, :locations %>
+  </div>
+  <div class="social-auth-container">
+     <label class="control-label label-margin">Social Links: </label>
+     <% if @team.fb_page_id %>
+       <div class="btn btn-default">
+         <i class="fa fa-facebook social-links"></i>
+         <%= @team.fb_page_name %>
+       </div>
+     <% else %>
+        <div>
+          <button id="set-fb" class="btn btn-large btn-primary">Set up Facebook</button>  
+       </div>
+     <% end %>
+  </div>
+  <div class="form-group">
+  <%= f.submit "Update", class: "btn btn-success" %>
+  </div>
+<% end %>

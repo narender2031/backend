@@ -1,0 +1,159 @@
+<link href="assets/css/bootstrap-tour.min.css" rel="stylesheet">
+<body class="dash-body nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <%= render partial: "layouts/left_col", :locals => {active: "Dashboard"} %>
+            <%= render partial: "layouts/nav_bar", :locals => {active: "Dashboard"} %>
+            <div class="right_col">
+                    <div class="row">
+                    <% if current_user.default_location != nil %>
+                      <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="tile-stats" id="panel4">
+                          <h3 class="widget-heading">Reviews this month</h3>
+                          <hr width="20px"/>
+                          <% if @all_reviews.blank? %>
+                            <div class="count">0</div>
+                            <p class="widget-sub-heading">Your goal was <%= @team.goal %></p>
+                          <% else %>
+                            <div class="count"><%=@all_reviews.group_by.count{ |m| m.created_at.beginning_of_month } %></div>
+                            <p class="widget-sub-heading">Your goal was <%= @team.goal %></p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="tile-stats" id="panel5">
+                          <h3 class="widget-heading">Lowest Rating</h3>
+                          <hr width="20px"/>
+                          <% if @all_reviews.blank? %>
+                            <div class="count">0</div>
+                             <p class="widget-sub-heading">On Yelp</p>
+                          <% else %>
+                            <div class="count"><%= @all_reviews.count %></div>
+                            <p class="widget-sub-heading">On Yelp</p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="tile-stats" id="panel6">
+                          <h3 class="widget-heading">Overall Rating</h3>
+                          <hr width="20px"/>
+                          <% if @all_reviews.blank? %>
+                            <div class="count">0</div>
+                              <p class="widget-sub-heading">1st in 4 Locations</p>
+                          <% else %>
+                            <div class="count"><%= @all_reviews.average('rating').round(1) %></div>
+                            <p class="widget-sub-heading">1st in 4 Locations</p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                        <div class="tile-stats" id="panel7">
+                          <h3 class="widget-heading">Total reviews</h3>
+                          <hr width="20px"/>
+                           <% if @all_reviews.blank? %>
+                            <div class="count">0</div>
+                              <p class="widget-sub-heading">2nd out of 4 locations</p>
+                          <% else %>
+                            <div class="count"><%= @all_reviews.count %></div>
+                            <p class="widget-sub-heading">2nd out of 4 locations</p>
+                          <% end %>
+                        </div>
+                      </div>
+                      <% end %>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8" >
+                          <%= render partial: "pages/invites" %>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="x_panel" id="panel8">
+                              <div class="x_title">
+                                  <h4>Reviews</h4>
+                                  <hr width="20px" />
+                              </div>
+                              <% if @all_reviews.blank? %>
+                                  <p class="empty-list">No Reviews yet!</p>
+                              <% else %>
+                              <%= column_chart @all_reviews.group_by_month(:review_time, format: "%B").count,  discrete: true,
+                                              colors: ['#4497e6'],
+                                              legend: "none",
+                                              library: {}
+                              %>
+                              <% end %>
+		                      </div>
+                      </div>
+                  </div>
+                </div>
+        </div>
+    </div>
+    <script>
+        $.ajax({
+            url: "opi/reviews",
+            type: 'get',
+            headers: {
+                "Authorization": 'Token token="<%= current_user.token %>"'
+            },
+            success: function(data){
+               console.log(data)
+            }
+        });
+
+    </script>
+    <script src="assets/js/bootstrap-tour.min.js"></script>
+    <script>
+          var tour = new Tour({
+          steps: [
+            {
+              element: "#panel1",
+              title: "Our logo",
+              content: "This is lavler"
+            },
+            {
+              element: "#panel3",
+              title: "Select The location ",
+              content: "Select the location to get bussiness review"
+            },
+          {
+            element: "#panel4",
+            title: "Review of the month",
+            content: "Show's the total reviews in this month"
+          },
+          {
+            element: "#panel5",
+            title: "Lowest rating",
+            content: "This show the lowest rating from all reviews"
+          },
+          {
+            element: "#panel6",
+            title: "overall rating",
+            content: "This apnel show the overall rating"
+          },
+          {
+            element: "#panel7",
+            title: "Total Reviews",
+            content: "This panel shows the overall review from every review website"
+          },
+          {
+            element: "#panel8",
+            title: "Review Graph",
+            content: "This panel give the Reviews analytics"
+          },
+          {
+            element: "#panel9",
+            title: "Reviews",
+            content: "This panel give the Reviews "
+          },
+          {
+            element: "#panel10",
+            title: "Invites",
+            content: "This panel shows the total invites"
+          }
+          ]});
+
+          // Initialize the tour
+          tour.init();
+
+          // Start the tour
+          tour.start();
+    </script>
+</body>

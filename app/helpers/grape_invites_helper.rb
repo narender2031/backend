@@ -1,0 +1,2 @@
+module GrapeInvitesHelper
+end

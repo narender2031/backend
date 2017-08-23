@@ -1,0 +1,12 @@
+
+var resp = '<%= @resp %>';
+var res = JSON.parse(resp.replace(/&quot;/g, '"'));
+if(res.type== "success" ){
+    $("#myModal").modal('hide');
+    
+
+}
+else{
+  $("#error").removeClass( "hide" )
+  $("#error").text("message is not send");
+}

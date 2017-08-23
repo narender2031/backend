@@ -1,0 +1,126 @@
+$dark: #3e3e3e;
+$green: #26b99a;
+$red: #d9534f;
+$light: #616060;
+
+.dash-body {
+    .site_title, .nav_title {
+        height: 100px;
+    }
+
+    .dash-logo {
+        width: 170px;
+        margin-left: 17px;
+    }
+
+    .right_col {
+        min-height: 100vH;
+    }
+}
+
+h4 {
+  color: $dark;
+}
+
+label {
+  color: $dark;
+  display: block;
+}
+
+ul {
+    list-style: none;
+}
+
+#fb-pages {
+    padding-left: 0px;
+}
+
+.fb-page{
+    padding: 5px 14px;
+    font-size: 15px;
+    color: #000;
+}
+
+.social-links {
+    font-size: 16px;
+    color: #0066cc;
+}
+.x_title{
+    text-align: center
+}
+
+.btn {
+     border-radius: 18px;
+     margin-top: 10px;
+     width: 190px;
+}
+
+.error {
+    text-align: center;
+    width: 100%;
+    color: #bc212d;
+}
+ul.msg_list li {
+    background: #fff;
+}
+.chartdiv {
+  width: 400px;
+  height: 200px;
+  float: left;
+  margin-right: 20px;
+}
+
+.x_title {
+  border-bottom: none;
+}
+
+hr {
+  margin-top: 10px;
+  margin-bottom: 0;
+  border-top: none;
+  border-bottom: 1px solid $dark;
+}
+
+.label-margin {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.red {
+  color: $red;
+}
+
+.green {
+  color: $green;
+}
+
+.empty-list{
+  text-align: center;
+  color: $light;
+  margin: 20px;
+  margin-bottom: 30px;
+  font-size: 17px;
+}
+
+.count {
+
+  text-align: center;
+  color: #0088cc;
+  font-size: 55px !important;
+  font-weight: 400 !important;
+}
+
+.widget-heading {
+  color: $dark !important;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 15px !important;
+}
+
+.widget-sub-heading {
+  margin-bottom: 10px !important;
+  color: $light !important;
+  text-align: center;
+  font-weight: bold;
+  font-size: 13px !important;
+}

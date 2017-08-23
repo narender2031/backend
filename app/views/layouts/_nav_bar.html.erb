@@ -1,0 +1,113 @@
+<div class="top_nav">
+        <div class="nav_menu">
+            <nav>
+                <div class="nav toggle">
+                    <a id="menu_toggle">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class="">
+                        <a href="javascript:;" class="user-profile dropdown-toggle"  data-toggle="dropdown" aria-expanded="false">
+                            <%= image_tag "profile.png" %>
+                            <%= current_user.first_name + " " + current_user.last_name %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-usermenu pull-right">
+                            <li><%= link_to settings_path do %>Profile
+                                <% end %>
+                            </li>
+                            <li>
+                                <%= link_to login_path do %><button class ="btn btn-success">Logout</button> <% end %>
+                            </li>
+
+                        </ul>
+
+
+
+                    </li>
+
+
+                    <% if active == "Dashboard" || active == "Invites"%>
+                        <li class="" >
+
+                            <button class="btn btn-success" data-toggle="modal" data-target="#myModal" >
+                            <span class="glyphicon glyphicon-send"></span>               Send Review Invite
+                            </button>
+
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                            <%= form_for @invite do |f| %>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Send Review Invite</h4>
+                                        </div>
+
+                                        <div class="modal-body">
+                                        <div class="error hide" id= "error"></div>
+
+                                        <div class="post">
+                                            <%= f.label :name  %>
+                                            <%= f.text_field :name, class:"form-control", :required => true %>
+                                        </div>
+                                        <br>
+                                            <div class="post">
+                                            <%= f.label :phone  %>
+                                            <%= f.text_field :phone, class:"form-control", :required => true %>
+                                        </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                                <div class="action">
+                                                <%= f.submit "Send", class: "btn btn-success", id: "send" %>
+                                        </div>
+                                </div>
+                                </div>
+                                <% end %>
+                                </div>
+                            </div>
+                        </li>
+                        <% end %>
+                    <% if active == "Dashboard" || active == "Dashboard"%>
+                    <li class="dropdown" id="panel3">
+                        <button class="btn btn-default dropdown-toggle menu1" type="button"  data-toggle="dropdown">
+                        <% if current_user.default_location != nil %>
+                                <%= @default_location.name %>
+                        <% end %>
+                        <span class="caret"></span></button>
+                            <ul class="dropdown-menu"  aria-labelledby="menu1">
+
+                            <% @location.each do |l|%>
+                                <li class="location" data="<%= l.id %>"><a><%= l.name %></a></li>
+                            <% end %>
+                        </ul>
+                    </li>
+                    <% end %>
+                </ul>
+            </nav>
+        </div>
+</div>
+<script>
+    $(".location").click(function(){
+        var location_id = ($(this).attr('data'))
+        console.log(location_id)
+        var settings = {
+                    async: true,
+                    crossDomain: true,
+                    url: "opi/set_location",
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                        "Authorization": "Token token=" + "<%= current_user.token %>"
+                    },
+                     "data": "{\"location_id\":" + location_id + "}"
+                    }
+        $.ajax(settings).done(function (response) {
+            console.log(response);
+            location.reload()
+        });
+        $(this).parents(".dropdown").find('.btn').html(
+            $(this).text()+" <span class=\"caret\"></span>"
+        );
+    });
+
+</script>

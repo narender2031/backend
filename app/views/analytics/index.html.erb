@@ -1,0 +1,82 @@
+<body class="dash-body nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <%= render partial: "layouts/left_col", :locals => {active: "Analytics"} %>
+            <%= render partial: "layouts/nav_bar", :locals => {active: "Analytics"} %>
+            <div class="right_col">
+                <div class="row">
+                     <div class="container">
+                    <div class="row">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h4>Analytics</h4>
+                                <hr width="20px"/> 
+                            </div>
+                            <div class="x_content">
+                             <% if current_user.default_location == nil %>
+                                <p class="empty-list">No Analytics Data yet!</p>
+                            <% else  %>  
+                                <div class="table table-responsive">
+                                    <table class= "table table-striped jambo_table bulk_action">
+                                        <thead>
+                                            <tr class="heading">
+                                                <th class="column-title"> Name</th>
+                                                <th class="column-title"> AllTimeClicks</th>
+                                                <th class="column-title"> Click In Month</th>
+                                                <th class="column-title">Click In Week</th>
+                                                <th class="column-title">Click In Day</th>
+                                                <th class="column-title">Click In 2 Hours</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="even pointer">
+                                                <td class=" "><%= @default_location.name %></div>
+                                                <td class=" "  id= "all" ><span id="all"></span></td>
+                                                <td class=" " ><span1 id "month"></span></td>
+                                                <td class=" "><span2></span></td>
+                                                <td class=" "><span3></span></td>
+                                                <td class=" "><span4></span></td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                  <div>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</body>
+<script>
+<% if current_user.default_location != nil %>
+    var settings = {
+
+      "async": true,
+      "crossDomain": true,
+      "url": "https://www.googleapis.com/urlshortener/v1/url?shortUrl=<%= @default_location.shortlink%>&projection=FULL&key=AIzaSyDwg09zw4OWkgG9H-ANpbzHU8DzwYBnaL4",
+      "method": "GET",
+      "headers": {
+        "Authorization": 'Token token="<%= current_user.token %>"'
+        }
+    }
+    
+        $.ajax(settings).done(function (response) {
+            var alltime_shorturlclicks = response["analytics"]["allTime"]["shortUrlClicks"]
+            $("span").text(""+ alltime_shorturlclicks)
+              var month_shorturlclicks = response["analytics"]["month"]["shortUrlClicks"]
+              var month_shorturlclicks = alltime_shorturlclicks
+            $("span1").text(""+ month_shorturlclicks)
+              var week_shorturlclicks = response["analytics"]["week"]["shortUrlClicks"]
+            $("span2").text(""+ week_shorturlclicks)
+              var day_shorturlclicks = response["analytics"]["day"]["shortUrlClicks"] 
+            $("span3").text(""+ day_shorturlclicks)
+              var twohours_shorturlclicks = response["analytics"]["twoHours"]["shortUrlClicks"] 
+            $("span4").text(""+ twohours_shorturlclicks)  
+                //console.log(twohours_shorturlclicks);
+    });
+<% end %>
+ 
+</script>           

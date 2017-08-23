@@ -1,0 +1,200 @@
+<body class="dash-body nav-md">
+  <div class="container body">
+     <%= render partial: "layouts/left_col", :locals => {active: "Settings"}  %>
+     <%= render partial: "layouts/nav_bar", :locals => {active: "Settings"}%>
+     <div class="right_col">
+       <div class="row">
+         <div class="x_panel">
+           <div class="x_title">
+             <h4>Team Settings</h4>
+             <hr width="30px">
+           </div>
+           <div class="x_content">
+             <%= render partial: "teams/form" %>
+           </div>
+         </div>
+       </div>
+       <div class="modal fade bs-example-modal-sm" id="fb-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+          <div class="modal-dialog modal-sm" role="document">
+             <div class="modal-content">
+                <div class="modal-header">
+                   <h4>Choose facebook page...</h4>
+                </div>
+                <div class="modal-body">
+                   <ul id="fb-pages">
+                   </ul>
+                </div>
+             </div>
+          </div>
+       </div>
+  </div>
+    <script>
+        $("#set-fb").click(function(){
+             event.preventDefault();
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    var accessToken = response.authResponse.accessToken;
+                    //console.log(accessToken);
+                    FB.api('/me/accounts', function(response) {
+                        //console.log(response);
+                        $(document).ready(function(){
+                          jQuery.noConflict();
+                        $('#fb-modal').modal('show');
+                      })
+                        response.data.forEach(function(page){
+                            $('#fb-pages').append('<li class="fb-page" data-id="' + page.id + '" data-access-token="' + page.access_token +'">' + page.name + '</li>');
+                          // console.log("page_id: " + page.id)
+                            //console.log("page_access_token: "+page.access_token)
+                        });
+                        $("#fb-pages li").click(function(){
+                            var page_id = $(this).data("id");
+                            var page_access_token = $(this).data("access-token");
+                            var page_name = $(this).text();
+                            //console.log(page_id + ", " + page_access_token + ", " + page_name);
+                            var settings = {
+                                async: true,
+                                crossDomain: true,
+                                "url": "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB9ti0A6n6dzMteVS_Td4n_SxdloP8IT_A",
+                                "method": "POST",
+                                "headers": {
+                                    "content-type": "application/json",
+                                },
+                                    "processData": false,
+                                    "data": '{"longUrl": "https://www.facebook.com/' + page_id + '"}'
+
+                            }
+
+                            $.ajax(settings).done(function (response) {
+                              //console.log("hello")
+                              //console.log(response)
+                             facebook_page = response['id'];
+                            //console.log(facebook_page);
+                            myfunction();
+                          });
+                          function myfunction(){
+                            setInterval(function(){
+                              $.ajax({
+                                  url: "opi/facebook_location",
+                                  type: 'post',
+                                  headers: {
+                                      "Authorization": 'Token token="<%= current_user.token %>"'
+                                  },
+                                  dataType: 'json',
+                                  data: {
+                                      location_id: location_id,
+                                      fb_page_name: page_name,
+                                      fb_page_id: page_id,
+                                      link_to_map_url: facebook_page,
+                                      fb_page_access_token: page_access_token
+
+                                  },
+
+                                  success: function(data) {
+                                      if(data.msg == "Success"){
+                                          FB.api(page_id + '/ratings?access_token=' + page_access_token, function(response){
+                                            console.log("fp.api response")
+                                      console.log(response);
+
+                                      location.reload();
+
+                                  });
+
+
+                                      }
+                                  }
+                              });
+                            },1000)
+                          }
+                        });
+
+
+                    });
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope: 'email, manage_pages, pages_show_list'});
+          });
+        window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '228343344341844',
+              xfbml      : true,
+              version    : 'v2.10'
+            });
+            FB.AppEvents.logPageView();
+        };
+
+        (function(d, s, id){
+           var js, fjs = d.getElementsByTagName(s)[0];
+           if (d.getElementById(id)) {return;}
+           js = d.createElement(s); js.id = id;
+           js.src = "//connect.facebook.net/en_US/sdk.js";
+           fjs.parentNode.insertBefore(js, fjs);
+         }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBlBHLU9LUtNyQvC7Hby4i-7fAcvXGYuw&libraries=places&callback=initMap" async defer></script>
+    <script>
+        function initMap() {
+            $('fieldset').map(function(){
+                var autocomplete = new google.maps.places.Autocomplete($(this).find("#name")[0]);
+                var name = $(this).find("#name")[0];
+                var address_input =  $(this).find("#address")[0];
+                var phone_number = $(this).find('#phone')[0];
+                var place_id = $(this).find("#place_id")[0];
+                var website =$(this).find('#website')[0];
+                var photo =$(this).find('#photo')[0];
+                var map_url =$(this).find('#link_to_map')[0];
+                var ratings =$(this).find('#ratings')[0];
+                var shortlink =$(this).find('#shortlink')[0];
+
+                autocomplete.addListener('place_changed', function() {
+                    place = autocomplete.getPlace();
+                    //console.log(place)
+                    if (!place) {
+                        return;
+                    }
+                    name.value = place.name
+                    address_input.value = place.formatted_address
+                    phone_number.value = place.formatted_phone_number
+                    place_id.value= place.place_id
+                    website.value = place.website
+
+                    photo.value = place.photos[0].getUrl({
+                                    maxWidth: 180
+                                    })
+                    ratings.value = place.rating
+                    var p_id = place.place_id
+                    //console.log(place.photos[0].getUrl({
+                      //              maxWidth: 180,
+                        //            maxHight: 140
+                          //          }) );
+                    var settings = {
+                                async: true,
+                                crossDomain: true,
+                                "url": "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyB9ti0A6n6dzMteVS_Td4n_SxdloP8IT_A",
+                                "method": "POST",
+                                "headers": {
+                                    "content-type": "application/json",
+                                },
+                                "data": '{"longUrl": "https://search.google.com/local/writereview?placeid=' + place.place_id + '"}'
+                                }
+                    $.ajax(settings).done(function (response) {
+                        //console.log(response);
+                        res = response['id']
+                        shortlink.value = res
+                        //console.log(res)
+                    });
+                });
+            });
+
+        }
+
+        $(".add_fields").click(function(){
+            time = new Date().getTime()
+            regexp = new RegExp($(this).data('id'),'g')
+            $(this).before($(this).data('fields').replace(regexp, time))
+            initMap();
+            event.preventDefault()
+        });
+
+    </script>
+</body>

@@ -1,0 +1,53 @@
+  <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" id="panel1">
+                        <a class="site_title">
+                            <%= image_tag "levler.png", class: "dash-logo" %>
+                        </a>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div id="sidebar-menu" class="main_menu_side hidden_print main_menu">
+                        <div class="menu_section active">
+                            <ul class="nav side-menu">
+                                <li class="<%= 'active' if active == 'Dashboard'  %>">
+                                    <%= link_to root_path do %>
+                                        <i class="fa fa-home"></i>
+                                        Dashboard
+                                    <% end %>
+                                </li>
+                                <li class="<%= 'active' if active == 'Locations'  %>">
+                                    <%= link_to locations_path  do %>
+                                        <i class="fa fa-map-marker"></i>
+                                        Locations
+                                    <% end %>
+                                </li>
+                                <li class="<%= 'active' if active == 'Invites'  %>">
+                                    <%= link_to invites_path  do %>
+                                        <i class="fa fa-send-o"></i>
+                                        Invites
+                                    <% end %>
+                                </li>
+                                <li class="<%= 'active' if active == 'Analytics' %>">
+                                    <%= link_to analytics_path  do %>
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        Analytics
+                                    <% end %>
+                                </li>
+                                <li class="<%= 'active' if active == 'Reviews'  %>">
+                                    <%= link_to reviews_path do %>
+                                        <i class="fa fa-star"></i>
+                                        Reviews
+                                    <% end %>
+                                </li>
+                                <li class="<%= 'active' if active == 'Settings'  %>">
+                                    <%= link_to settings_path do %>
+                                        <i class="fa fa-cog"></i>
+                                        Settings
+                                    <% end %>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>

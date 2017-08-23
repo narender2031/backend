@@ -1,0 +1,60 @@
+<body class="dash-body nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <%= render partial: "layouts/left_col", :locals => {active: "Reviews"} %>
+            <%= render partial: "layouts/nav_bar", :locals => {active: "Reviews"} %>
+            <div class="right_col">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                        <h4>Recent Reviews</h4>
+                        <hr width="20px"/> 
+                            </div>
+                                <div class="x_content">
+                                <% if @all_reviews.empty? %>
+                                        <p class="empty-list">No Reviews yet!</p>
+                                <%else%>  
+                                 <% @all_reviews.each do |a| %>
+                                    <article class="media event">
+                                        <a class="pull-left">
+                                        <% if a.src == "yelp" %>
+                                            <p class="fa-fa-icon"><%= image_tag "yelp.png" %></p>
+                                        <% else %>
+                                            <p class="fa-fa-icon"><img src="<%= a.src %>"></p>
+                                        <% end %>
+                                        </a>
+                                        <a class="pull-right">
+                                            <p><%= a.review_time.to_date%><p>
+                                        </a>
+                                        <div class= "media-body">
+                                            <a class= "title"><%= a.name %>
+                                             </a>
+                                            <p><%= a.comment %></p>
+                                        </div>
+                                    </article>
+                                    <% end %>
+                                    </div>
+                                <% end %>                            
+                                </div>     
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>   
+    </div>  
+    
+    <script>
+        $.ajax({
+            url: "opi/reviews",
+            type: 'get', 
+            headers: {
+                "Authorization": 'Token token="<%= current_user.token %>"'
+            },
+            success: function(data){
+                console.log(data)
+            }                                   
+        });
+    </script>
+  
+</body>

@@ -1,0 +1,77 @@
+<div class="container body">
+   <%= render partial: "layouts/left_col", :locals => {active: "Settings"}  %>
+   <%= render partial: "layouts/nav_bar", :locals => {active: "Settings"}%>
+   <div class="right_col">
+      <%= form_for @team do |f| %>
+      <div class="form-group">
+         <%= f.label :name, class: "col-sm-1 control-label" %>
+         <div class: "col-md-6 col-sm-6 col-xs-12">
+            <%= f.text_field :name, class: "form-control" %>
+         </div>
+      </div>
+      <div class="container">
+         <% @location.each do |l| %>
+         <div class="col-md-3 align-center">
+            <%  if l.photo == ""%>
+            <%= image_tag "/assets/company_profile.png" %>
+            <% else %>
+            <img src ="<%= l.photo %>">
+            <% end %>
+         </div>
+         <div class="col-md-9">
+            <h3>
+               <img src= "/assets/NAPW_n.png"><%= l.name %>
+            </h3>
+            <%= image_tag "/assets/NAPW_a.png" %><%= l.address %><br>
+            <% if l.phone == "" || l.phone == "undefined"%>
+            <%= image_tag "/assets/NAPW_p.png" %>no phone number<br>
+            <% else %>
+            <%= image_tag "/assets/NAPW_p.png" %><%= l.phone %><br>
+            <% end %>
+            <% if l.website == "" || l.website == "undefined" %>
+            <%= image_tag "/assets/NAPW_w.png" %>no website link<br>
+            <% else %>
+            <%= image_tag "/assets/NAPW_w.png" %><a href= "<%= l.website %>"><%= l.website %></a><br>
+            <% end %>
+            <% if l.ratings == "" || l.ratings == "undefined"%>
+            <%= image_tag "/assets/star (3).png" %>no ratings on google<br>
+            <% else %>
+            <%= image_tag "/assets/star (3).png" %><%= l.ratings%><br>
+            <% end %>
+            <a href="https://search.google.com/local/writereview?placeid=<%= l.google_place_id %>"> click here for Reviews</a><br>
+            <a href= "<%= l.shortlink %>"><%= l.shortlink %></a>
+         </div>
+         <% end %>
+      </div>
+      <div>
+         <%= link_to_add_fields "Add  Location", f, :locations %>
+      </div>
+      <div class="social-auth-container">
+         <h4>Social Links</h4>
+         <% if @team.fb_page_id %>
+         <i class="fa fa-facebook social-links"></i>
+         <%= @team.fb_page_name %>
+         <% else %>
+         <div
+         <button id="set-fb" class="btn btn-large btn-primary">Set up Facebook</button>
+      </div>
+      <% end %>
+   </div>
+   <div class="form-group">
+      <%= f.submit "Update", class: "btn btn-success" %>
+   </div>
+   <% end %>
+   <div class="modal fade bs-example-modal-sm" id="fb-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-sm" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h4>Choose facebook page...</h4>
+            </div>
+            <div class="modal-body">
+               <ul id="fb-pages">
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
